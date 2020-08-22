@@ -116,7 +116,7 @@ def load_data(city, month, day):
     
         # filter by month to create the new dataframe
         df = df[df['month']==month]
-        print(df)
+        
     # filter by day of week if applicable
     
     if day != 'all':
@@ -138,17 +138,23 @@ def time_stats(df,time_filter):
     if time_filter =='none' or time_filter =='day' :
         df['month'] = df['Start Time'].dt.month
 
-        print("The Most Common month is : {}".format((df['month']).mode()[0]))
+        print("The Most Common Month is : {}\n".format((df['month']).mode()[0]))
 
     # display the most common day of week
+    if time_filter =='none' or time_filter =='month' :
+        dayOfWeek={0:'Monday', 1:'Tuesday', 2:'Wednesday', 3:'Thursday', 4:'Friday', 5:'Saturday', 6:'Sunday'}
+        df['weekday'] = df['Start Time'].dt.dayofweek.map(dayOfWeek)
 
-
+        print("The Most Common Day is : {}\n".format((df['weekday']).mode()[0]))
+        
     # display the most common start hour
-
+    df['Hour'] = df['Start Time'].dt.hour
+    print("The Most Common Hour is : {}\n".format((df['Hour']).mode()[0]))
 
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
-'''
+
+
 
 def station_stats(df):
     """Displays statistics on the most popular stations and trip."""
@@ -168,7 +174,7 @@ def station_stats(df):
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
 
-
+'''
 def trip_duration_stats(df):
     """Displays statistics on the total and average trip duration."""
 
