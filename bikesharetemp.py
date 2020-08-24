@@ -155,26 +155,39 @@ def time_stats(df,time_filter):
     print('-'*40)
 
 
-
 def station_stats(df):
     """Displays statistics on the most popular stations and trip."""
 
     print('\nCalculating The Most Popular Stations and Trip...\n')
     start_time = time.time()
+    df = df.rename(columns={'Start Station': 'SStation', 'End Station': 'EStation'})
 
     # display most commonly used start station
+    start_station_count=df['SStation'].value_counts()
 
+    most_common_start=start_station_count.index[0]
+    print("most common Start Station is: {}\n".format(most_common_start))
 
     # display most commonly used end station
 
+    end_station_count=df['EStation'].value_counts()
+
+    most_common_end=end_station_count.index[0]
+    print("most common End Station is: {}\n".format(most_common_end))
 
     # display most frequent combination of start station and end station trip
-    #test
+    df['trips'] = list(zip(df.SStation, df.EStation))
+
+    trip_count=df['trips'].value_counts()
+
+    most_common_trip=trip_count.index[0]
+    
+    print('The most common Trip(Start,End) is : {}\n'.format(most_common_trip))
 
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
 
-'''
+
 def trip_duration_stats(df):
     """Displays statistics on the total and average trip duration."""
 
@@ -182,33 +195,48 @@ def trip_duration_stats(df):
     start_time = time.time()
 
     # display total travel time
+    total_trip_duration=round(df['Trip Duration'].sum(),2)
+    seconds=total_trip_duration
+    seconds_in_day = 60 * 60 * 24
+    seconds_in_hour = 60 * 60
+    seconds_in_minute = 60
 
+    days = seconds // seconds_in_day
+    hours = (seconds - (days * seconds_in_day)) // seconds_in_hour
+    minutes = (seconds - (days * seconds_in_day) - (hours * seconds_in_hour)) 
+    print('Total Trip Duration is {} days, {} hours and {} mins'.format(days, hours, minutes))
 
     # display mean travel time
-
+    avg_trip_duaration=round(df['Trip Duration'].mean()/60, 2)
+    print('Avg Trip Duration is: {} min'.format(avg_trip_duaration))
 
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
 
 
-def user_stats(df):
+def user_stats(df,city):
     """Displays statistics on bikeshare users."""
 
     print('\nCalculating User Stats...\n')
     start_time = time.time()
 
     # Display counts of user types
-
+    print("\nUser Types:\n {}".format(df['User Type'].value_counts()))
 
     # Display counts of gender
-
+    if city =='chicago' or city =='new york city' :
+        
+        print("\nUsers Genders:\n {}".format(df['Gender'].value_counts()))
 
     # Display earliest, most recent, and most common year of birth
-
+    if city =='chicago' or city =='new york city' :
+        print("youngest User birth year:\n {}".format(df['Birth Year'].min()))
+        print("Oldest User birth year:\n {}".format(df['Birth Year'].max()))
+        print("Most common year of birth:\n {}".format(df['Birth Year'].mode()))
 
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
-'''
+
 
 def main():
     while True:
@@ -216,9 +244,9 @@ def main():
         df = load_data(city, month, day)
 
         time_stats(df,time_filter)
-        #station_stats(df)
-        #trip_duration_stats(df)
-        #user_stats(df)
+        station_stats(df)
+        trip_duration_stats(df)
+        user_stats(df,city)
 
         restart = input('\nWould you like to restart? Enter yes or no.\n')
         if restart.lower() != 'yes':
